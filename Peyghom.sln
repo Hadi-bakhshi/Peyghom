@@ -1,0 +1,35 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35931.197 d17.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{646E40E1-3AEC-4F6E-8FCF-92A827A15595}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "API", "API", "{C27A38CE-BCFC-498F-8F2D-37C8FDE30F6C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Peyghom.Api", "src\API\Peyghom.Api\Peyghom.Api.csproj", "{8572E2C0-67E2-4B0D-8A89-2513243C81A6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8572E2C0-67E2-4B0D-8A89-2513243C81A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8572E2C0-67E2-4B0D-8A89-2513243C81A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8572E2C0-67E2-4B0D-8A89-2513243C81A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8572E2C0-67E2-4B0D-8A89-2513243C81A6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{C27A38CE-BCFC-498F-8F2D-37C8FDE30F6C} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{8572E2C0-67E2-4B0D-8A89-2513243C81A6} = {C27A38CE-BCFC-498F-8F2D-37C8FDE30F6C}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {33F40B14-386E-479C-A09F-63028E6E81E2}
+	EndGlobalSection
+EndGlobal
