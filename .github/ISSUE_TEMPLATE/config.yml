@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Peyghom Security Vulnerability
+    url: https://github.com/Hadi-bakhshi/Peyghom/blob/main/SECURITY.md
+    about: Please report security vulnerabilities according to our security policy.
+  - name: Peyghom Discussions
+    url: https://github.com/Hadi-bakhshi/Peyghom/discussions
+    about: Please ask and answer questions or start discussions here.
+  - name: Peyghom Documentation
+    url: https://github.com/Hadi-bakhshi/Peyghom/blob/main/README.md
+    about: Check out the documentation before reporting issues.
