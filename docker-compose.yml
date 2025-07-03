@@ -1,0 +1,18 @@
+services:
+  peyghom.api:
+    image: ${DOCKER_REGISTRY-}peyghomapi
+    container_name: Peyghom.Api
+    build:
+      context: .
+      dockerfile: src/API/Peyghom.Api/Dockerfile
+
+  peyghom.mongodb:
+    image: mongo:latest
+    container_name: Peyghom.Mongodb
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=peyghom
+      - MONGO_INITDB_ROOT_PASSWORD=peyghom@123
+    volumes:
+      - ./.containers/mongo:/data/db
