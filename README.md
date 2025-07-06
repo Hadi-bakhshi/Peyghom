@@ -32,7 +32,7 @@ Peyghom is a full-featured messaging application that enables seamless communica
 ## 🚀 Getting Started
 
 ### Prerequisites
-- .NET SDK 7.0 or later
+- .NET SDK 8.0 or later
 - Docker
 
 ### Installation
