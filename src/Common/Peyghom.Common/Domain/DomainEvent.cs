@@ -1,33 +1,20 @@
-﻿using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
+﻿namespace Peyghom.Common.Domain;
 
-namespace Peyghom.Common.Domain;
-
-public class DomainEvent
+public abstract class DomainEvent : IDomainEvent
 {
-    [BsonId]
-    [BsonRepresentation(BsonType.ObjectId)]
-    public string Id { get; set; }
+    protected DomainEvent()
+    {
+        Id = Guid.NewGuid();
+        OccurredOnUtc = DateTime.UtcNow;
+    }
 
-    [BsonElement("eventType")]
-    public string EventType { get; set; }
+    protected DomainEvent(Guid id, DateTime occurredOnUtc)
+    {
+        Id = id;
+        OccurredOnUtc = occurredOnUtc;
+    }
 
-    [BsonElement("aggregateId")]
-    public string AggregateId { get; set; }
+    public Guid Id { get; init; }
 
-    [BsonElement("userId")]
-    [BsonRepresentation(BsonType.ObjectId)]
-    public string UserId { get; set; }
-
-    [BsonElement("data")]
-    public object Data { get; set; }
-
-    [BsonElement("timestamp")]
-    public DateTime Timestamp { get; set; }
-
-    [BsonElement("processed")]
-    public bool Processed { get; set; }
-
-    [BsonElement("processingAttempts")]
-    public int ProcessingAttempts { get; set; }
+    public DateTime OccurredOnUtc { get; init; }
 }
