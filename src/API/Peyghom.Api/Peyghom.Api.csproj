@@ -20,6 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Modules\Chat\Peyghom.Modules.Chat\Peyghom.Modules.Chat.csproj" />
     <ProjectReference Include="..\..\Modules\Users\Peyghom.Modules.Users\Peyghom.Modules.Users.csproj" />
   </ItemGroup>
 

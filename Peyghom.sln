@@ -25,6 +25,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Users", "Users", "{8F0F1448
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Peyghom.Modules.Users", "src\Modules\Users\Peyghom.Modules.Users\Peyghom.Modules.Users.csproj", "{A0DE07B0-0376-4464-993F-C41440A6603E}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Chat", "Chat", "{3CE2AACC-91A3-4952-9A67-68DE7A0FCCF4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Peyghom.Modules.Chat", "src\Modules\Chat\Peyghom.Modules.Chat\Peyghom.Modules.Chat.csproj", "{939C8D9B-7F51-4182-B4BA-6F32E0E5514C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,6 +51,10 @@ Global
 		{A0DE07B0-0376-4464-993F-C41440A6603E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A0DE07B0-0376-4464-993F-C41440A6603E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A0DE07B0-0376-4464-993F-C41440A6603E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{939C8D9B-7F51-4182-B4BA-6F32E0E5514C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{939C8D9B-7F51-4182-B4BA-6F32E0E5514C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{939C8D9B-7F51-4182-B4BA-6F32E0E5514C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{939C8D9B-7F51-4182-B4BA-6F32E0E5514C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -59,6 +67,8 @@ Global
 		{10B879F1-EC11-4FEF-9F39-2D91075CD47C} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{8F0F1448-D0ED-4C7A-9028-F5A5FD3958A2} = {10B879F1-EC11-4FEF-9F39-2D91075CD47C}
 		{A0DE07B0-0376-4464-993F-C41440A6603E} = {8F0F1448-D0ED-4C7A-9028-F5A5FD3958A2}
+		{3CE2AACC-91A3-4952-9A67-68DE7A0FCCF4} = {10B879F1-EC11-4FEF-9F39-2D91075CD47C}
+		{939C8D9B-7F51-4182-B4BA-6F32E0E5514C} = {3CE2AACC-91A3-4952-9A67-68DE7A0FCCF4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {33F40B14-386E-479C-A09F-63028E6E81E2}

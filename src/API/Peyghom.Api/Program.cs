@@ -2,7 +2,9 @@ using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Peyghom.Api.Middleware;
 using Peyghom.Common;
+using Peyghom.Modules.Chat;
 using Peyghom.Modules.Users;
+
 using Scalar.AspNetCore;
 using Serilog;
 
@@ -28,15 +30,15 @@ builder.Services.AddInfrastructure(
 
 
 builder.Services.AddHealthChecks();
-    
+
 
 //builder.Configuration.AddModuleConfiguration(["messaging", "users", "calling"]);
 
 builder.Services.AddUsersModule(builder.Configuration);
-
+builder.Services.AddChatModule(builder.Configuration);
 
 var app = builder.Build();
-    app.MapOpenApi();
+app.MapOpenApi();
 
 if (app.Environment.IsDevelopment())
 {
