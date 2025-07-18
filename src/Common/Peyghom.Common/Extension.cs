@@ -16,7 +16,6 @@ namespace Peyghom.Common;
 
 public static class Extension
 {
-
     public static IServiceCollection AddApplication(
         this IServiceCollection services,
         System.Reflection.Assembly[] moduleAssemblies)
@@ -78,7 +77,8 @@ public static class Extension
     /// <param name="services"></param>
     /// <param name="assemblies"></param>
     /// <returns></returns>
-    public static IServiceCollection AddEndpoints(this IServiceCollection services, params System.Reflection.Assembly[] assemblies)
+    public static IServiceCollection AddEndpoints(this IServiceCollection services,
+        params System.Reflection.Assembly[] assemblies)
     {
         // we'll search for the classes that implemented I Endpoint and
         // register them as transient
@@ -89,8 +89,17 @@ public static class Extension
             .Select(type => ServiceDescriptor.Transient(typeof(IEndpoint), type))
             .ToArray();
 
+        // Register hub endpoints
+        var hubDescriptors = assemblies
+            .SelectMany(a => a.GetTypes())
+            .Where(type => type is { IsAbstract: false, IsInterface: false } &&
+                           type.IsAssignableTo(typeof(IHubEndpoint)))
+            .Select(type => ServiceDescriptor.Transient(typeof(IHubEndpoint), type))
+            .ToArray();
+
         // ensures that duplicate registrations are avoided
         services.TryAddEnumerable(serviceDescriptors);
+        services.TryAddEnumerable(hubDescriptors);
 
         return services;
     }
@@ -116,6 +125,12 @@ public static class Extension
             endpoint.MapEndpoint(builder);
         }
 
+        IEnumerable<IHubEndpoint> hubEndpoints = app.Services.GetRequiredService<IEnumerable<IHubEndpoint>>();
+
+        foreach (IHubEndpoint hubEndpoint in hubEndpoints)
+        {
+            hubEndpoint.MapHub(app);
+        }
         return app;
     }
 }
