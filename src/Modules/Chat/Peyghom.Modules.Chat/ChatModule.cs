@@ -19,7 +19,9 @@ public static class ChatModule
     }
 
     private static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
-    {}
+    {
+        services.AddSignalR();
+    }
 
     
 }
