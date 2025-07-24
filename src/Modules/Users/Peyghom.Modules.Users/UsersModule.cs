@@ -14,7 +14,7 @@ public static class UsersModule
         services.AddInfrastructure(configuration);
 
         services.AddEndpoints(AssemblyReference.Assembly);
-
+    
         return services;
     }
 
