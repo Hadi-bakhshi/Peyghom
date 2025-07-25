@@ -2,4 +2,4 @@
 
 namespace Peyghom.Modules.Users.Features.SendOtp;
 
-public sealed record SendOtpCommand(string PhoneNumber) : ICommand<SendOtpResponse>;
+public sealed record SendOtpCommand(string Target, string Type) : ICommand<SendOtpResponse>;

@@ -16,3 +16,10 @@ services:
       - MONGO_INITDB_ROOT_PASSWORD=peyghom@123
     volumes:
       - ./.containers/mongo:/data/db
+
+  peyghom.redis:
+    image: redis:latest
+    container_name: Peyghom.Redis
+    restart: always
+    ports:
+      - 6379:6379

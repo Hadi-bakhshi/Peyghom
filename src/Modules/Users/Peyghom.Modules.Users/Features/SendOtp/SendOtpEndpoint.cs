@@ -14,7 +14,7 @@ internal sealed class SendOtpEndpoint : IEndpoint
     {
         app.MapPost("auth/otp", async (SendOtpRequest request, ISender sender) =>
             {
-                Result<SendOtpResponse> result = await sender.Send(new SendOtpCommand(request.PhoneNumber));
+                Result<SendOtpResponse> result = await sender.Send(new SendOtpCommand(request.Target, request.Type));
 
                 return result.Match(Results.Ok, ApiResults.Problem);
             })
@@ -23,4 +23,4 @@ internal sealed class SendOtpEndpoint : IEndpoint
     }
 }
 
-internal sealed record SendOtpRequest(string PhoneNumber);
+internal sealed record SendOtpRequest(string Target, string Type);
