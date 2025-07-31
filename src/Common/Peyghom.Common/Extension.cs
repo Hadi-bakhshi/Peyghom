@@ -40,8 +40,8 @@ public static class Extension
         string redisConnectionString)
     {
         services.AddAuthenticationInternal();
-
         services.AddAuthorizationInternal();
+
         Console.WriteLine(databaseConnectionString);
         try
         {

@@ -48,9 +48,6 @@ app.UseLogContextTraceLogging();
 //app.UseHttpsRedirection();
 
 
-//app.UseAuthentication();
-
-//app.UseAuthorization();
 
 
 app.MapHealthChecks("health", new HealthCheckOptions
@@ -72,6 +69,14 @@ app.MapScalarApiReference(options =>
     //options.AddServer(new ScalarServer("http://localhost:8080"));
     //options.AddServer(new ScalarServer("https://localhost:8081"));
 }); // scalar/v1
+
+
+
+
+app.UseAuthentication();
+
+app.UseAuthorization();
+
 
 app.MapEndpoints();
 

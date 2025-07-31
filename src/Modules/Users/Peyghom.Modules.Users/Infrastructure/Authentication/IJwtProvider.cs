@@ -6,11 +6,12 @@ public interface IJwtProvider
 {
     string GenerateAccessToken();
     string GenerateRefreshToken();
+
     /// <summary>
     /// This method is called to generate a token
     /// used in otp verification
     /// </summary>
     /// <returns>string</returns>
-    string GenerateVerificationToken();
+    string GenerateVerificationToken(string identifier);
     ClaimsPrincipal? ValidateExpiredToken(string token);
 }
