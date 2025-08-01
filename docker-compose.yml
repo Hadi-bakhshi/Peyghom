@@ -13,7 +13,7 @@ services:
       - "27017:27017"
     environment:
       - MONGO_INITDB_ROOT_USERNAME=peyghom
-      - MONGO_INITDB_ROOT_PASSWORD=peyghom@123
+      - MONGO_INITDB_ROOT_PASSWORD=peyghom123
     volumes:
       - ./.containers/mongo:/data/db
 

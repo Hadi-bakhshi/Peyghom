@@ -59,6 +59,7 @@ public static class Extension
         services.TryAddSingleton<ICacheService, CacheService>();
 
         var mongoClientSettings = MongoClientSettings.FromConnectionString(databaseConnectionString);
+        mongoClientSettings.AllowInsecureTls = true;
         //mongoClientSettings.ClusterConfigurator = c => c.Subscribe(
         //    new DiagnosticsActivityEventSubscriber(
         //        new InstrumentationOptions

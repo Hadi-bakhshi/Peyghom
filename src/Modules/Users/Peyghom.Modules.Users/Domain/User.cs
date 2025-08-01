@@ -62,4 +62,8 @@ public class User
 
     [BsonElement("privacySettings")]
     public UserPrivacySettings? PrivacySettings { get; set; }
+
+    [BsonElement("roleNames")]
+    public List<string> RoleNames { get; set; }
+
 }

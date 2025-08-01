@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Peyghom.Common;
 using Peyghom.Modules.Users.Infrastructure.Authentication;
 using Peyghom.Modules.Users.Infrastructure.Otp;
+using Peyghom.Modules.Users.Infrastructure.Seeding;
 
 namespace Peyghom.Modules.Users;
 
@@ -25,7 +26,16 @@ public static class UsersModule
         services.Configure<JwtSettings>(configuration.GetSection(JwtSettings.SectionName));
         services.AddScoped<IOtpService, OtpService>();
         services.AddScoped<IJwtProvider, JwtProvider>();
+
+        services.AddScoped<DatabaseSeeder>();
     }
 
-    
+    public static async Task SeedUsersDatabaseAsync(this IServiceProvider serviceProvider)
+    {
+        using var scope = serviceProvider.CreateScope();
+        var seeder = scope.ServiceProvider.GetRequiredService<DatabaseSeeder>();
+        await seeder.SeedAsync();
+    }
+
+
 }

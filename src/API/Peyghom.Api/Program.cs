@@ -39,6 +39,8 @@ builder.Services.AddChatModule(builder.Configuration);
 
 var app = builder.Build();
 
+await app.Services.SeedUsersDatabaseAsync();
+
 app.UseExceptionHandler();
 
 app.UseSerilogRequestLogging();
