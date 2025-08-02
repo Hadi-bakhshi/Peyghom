@@ -18,8 +18,8 @@ internal sealed class SendOtpEndpoint : IEndpoint
 
                 return result.Match(Results.Ok, ApiResults.Problem);
             })
-            //.AllowAnonymous()
-            .RequireAuthorization(Permissions.VerifyUserOtp)
+            .AllowAnonymous()
+            //.RequireAuthorization(Permissions.VerifyUserOtp)
             .WithTags(Tags.Users);
     }
 }

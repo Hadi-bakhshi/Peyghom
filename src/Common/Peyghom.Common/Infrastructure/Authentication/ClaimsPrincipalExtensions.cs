@@ -5,12 +5,11 @@ namespace Peyghom.Common.Infrastructure.Authentication;
 
 public static class ClaimsPrincipalExtensions
 {
-    public static Guid GetUserId(this ClaimsPrincipal? principal)
+    public static string GetUserId(this ClaimsPrincipal? principal)
     {
         string? userId = principal?.FindFirst(CustomClaims.Sub)?.Value;
 
-        return Guid.TryParse(userId, out Guid parsedUserId) ?
-            parsedUserId :
+        return userId ??
             throw new PeyghomException("User identifier is unavailable");
     }
 
@@ -18,6 +17,12 @@ public static class ClaimsPrincipalExtensions
     {
         return principal?.FindFirst(ClaimTypes.NameIdentifier)?.Value ??
                throw new PeyghomException("User identity is unavailable");
+    }
+
+    public static string GetRoleName(this ClaimsPrincipal? principal)
+    {
+        return principal?.FindFirst(ClaimTypes.Role)?.Value
+                ?? throw new PeyghomException("User role is unavailable");
     }
 
     public static HashSet<string> GetPermissions(this ClaimsPrincipal? principal)

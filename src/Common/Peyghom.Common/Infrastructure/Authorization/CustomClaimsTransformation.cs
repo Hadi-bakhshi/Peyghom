@@ -23,7 +23,9 @@ internal sealed class CustomClaimsTransformation(IServiceScopeFactory serviceSco
 
         string identityId = principal.GetIdentityId();
 
-        Result<PermissionsResponse> result = await permissionService.GetUserPermissionsAsync(identityId);
+        string roleName = principal.GetRoleName();
+
+        Result<PermissionsResponse> result = await permissionService.GetUserPermissionsAsync(identityId, roleName == "Ghost");
 
         if (result.IsFailure)
         {

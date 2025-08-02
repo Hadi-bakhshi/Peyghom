@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Peyghom.Common.Infrastructure.Authentication;
+using Peyghom.Modules.Users.Domain;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -34,9 +35,10 @@ internal sealed class JwtProvider : IJwtProvider
                 DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(),
                 ClaimValueTypes.Integer64),
             new (CustomClaims.Permission, Permissions.VerifyUserOtp),
-            new(ClaimTypes.NameIdentifier, identifier)
+            new(ClaimTypes.NameIdentifier, identifier),
+            new(ClaimTypes.Role, Role.Ghost.Name),
         };
-        
+
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(claims),

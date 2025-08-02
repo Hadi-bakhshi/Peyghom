@@ -4,5 +4,5 @@ namespace Peyghom.Common.Application.Authorization;
 
 public interface IPermissionService
 {
-    Task<Result<PermissionsResponse>> GetUserPermissionsAsync(string identityId);
+    Task<Result<PermissionsResponse>> GetUserPermissionsAsync(string identityId, bool isGhost);
 }
