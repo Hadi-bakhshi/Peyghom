@@ -42,7 +42,6 @@ public static class Extension
         services.AddAuthenticationInternal();
         services.AddAuthorizationInternal();
 
-        Console.WriteLine(databaseConnectionString);
         try
         {
             IConnectionMultiplexer connectionMultiplexer = ConnectionMultiplexer.Connect(redisConnectionString);
@@ -59,14 +58,11 @@ public static class Extension
         services.TryAddSingleton<ICacheService, CacheService>();
 
         var mongoClientSettings = MongoClientSettings.FromConnectionString(databaseConnectionString);
-        mongoClientSettings.AllowInsecureTls = true;
-        //mongoClientSettings.ClusterConfigurator = c => c.Subscribe(
-        //    new DiagnosticsActivityEventSubscriber(
-        //        new InstrumentationOptions
-        //        {
-        //            CaptureCommandText = true,
-        //        }));
+        //mongoClientSettings.AllowInsecureTls = true;
         services.AddSingleton<IMongoClient>(new MongoClient(mongoClientSettings));
+
+        //services.AddScoped<IMongoDatabase>(provider =>
+        //   provider.GetRequiredService<IMongoClient>().GetDatabase("peyghom"));
 
         return services;
     }

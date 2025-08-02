@@ -5,6 +5,9 @@ using Peyghom.Common.Application.Authorization;
 using Peyghom.Modules.Users.Infrastructure.Authentication;
 using Peyghom.Modules.Users.Infrastructure.Authorization;
 using Peyghom.Modules.Users.Infrastructure.Otp;
+using Peyghom.Modules.Users.Infrastructure.Repository.Contacts;
+using Peyghom.Modules.Users.Infrastructure.Repository.UserNotifications;
+using Peyghom.Modules.Users.Infrastructure.Repository.Users;
 using Peyghom.Modules.Users.Infrastructure.Seeding;
 
 namespace Peyghom.Modules.Users;
@@ -26,9 +29,18 @@ public static class UsersModule
     private static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddScoped<IPermissionService, PermissionService>();
+
         services.Configure<JwtSettings>(configuration.GetSection(JwtSettings.SectionName));
+
         services.AddScoped<IOtpService, OtpService>();
+
         services.AddScoped<IJwtProvider, JwtProvider>();
+
+        services.AddScoped<IUserRepository, UserRepository>();
+
+        services.AddScoped<IContactRepository, ContactRepository>();
+
+        services.AddScoped<IUserNotificationRepository, UserNotificationRepository>();
 
         services.AddScoped<DatabaseSeeder>();
     }
