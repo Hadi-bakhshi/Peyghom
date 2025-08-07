@@ -16,7 +16,6 @@
       <Folder Include="Features\MarkMessageAsRead\" />
       <Folder Include="Features\StartTyping\" />
       <Folder Include="Features\StopTyping\" />
-      <Folder Include="Infrastructure\Repository\Messages\" />
     </ItemGroup>
 
 </Project>
