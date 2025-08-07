@@ -10,4 +10,13 @@
       <ProjectReference Include="..\..\..\Common\Peyghom.Common\Peyghom.Common.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Features\JoinChat\" />
+      <Folder Include="Features\LeaveChat\" />
+      <Folder Include="Features\MarkMessageAsRead\" />
+      <Folder Include="Features\StartTyping\" />
+      <Folder Include="Features\StopTyping\" />
+      <Folder Include="Infrastructure\Repository\" />
+    </ItemGroup>
+
 </Project>

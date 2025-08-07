@@ -1,4 +1,5 @@
-﻿using Peyghom.Modules.Users.Domain;
+﻿using Peyghom.Common.Application.Repository;
+using Peyghom.Modules.Users.Domain;
 
 namespace Peyghom.Modules.Users.Infrastructure.Repository.Users;
 

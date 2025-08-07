@@ -18,7 +18,7 @@
       <PackageReference Include="Serilog" Version="4.3.0" />
     </ItemGroup>
 	<ItemGroup>
-		<FrameworkReference Include="Microsoft.AspNetCore.App"/>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
 	</ItemGroup>
 
 </Project>

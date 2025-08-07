@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace Peyghom.Modules.Users.Infrastructure.Repository;
+namespace Peyghom.Common.Application.Repository;
 
 public interface IRepository<T> where T : class
 {
