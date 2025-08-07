@@ -1,10 +1,11 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Driver;
+using Peyghom.Common.Application.Repository;
 using System.Linq.Expressions;
 
-namespace Peyghom.Modules.Users.Infrastructure.Repository;
+namespace Peyghom.Common.Infrastructure.Repository;
 
-internal abstract class BaseRepository<T> : IRepository<T> where T : class
+public abstract class BaseRepository<T> : IRepository<T> where T : class
 {
     protected readonly IMongoCollection<T> _collection;
 
@@ -71,6 +72,6 @@ internal abstract class BaseRepository<T> : IRepository<T> where T : class
     {
         return await _collection.CountDocumentsAsync(predicate);
     }
-
+    
     protected abstract string GetEntityId(T entity);
 }
