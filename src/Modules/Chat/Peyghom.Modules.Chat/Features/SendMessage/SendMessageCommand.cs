@@ -5,11 +5,11 @@ using Peyghom.Modules.Chat.Hubs;
 namespace Peyghom.Modules.Chat.Features.SendMessage;
 
 public sealed record SendMessageCommand(
- string ChatId,
- string SenderId,
- string Content,
- MessageType MessageType,
- string? ReplyToMessageId,
- List<MessageAttachmentRequest>? Attachments) : ICommand<MessageResponse>;
+    string SenderId,
+    string ChatId,
+    string Content,
+    MessageType MessageType = MessageType.Text,
+    string? ReplyToMessageId = null,
+    List<MessageAttachmentRequest>? Attachments = null) : ICommand<MessageResponse>;
 
 

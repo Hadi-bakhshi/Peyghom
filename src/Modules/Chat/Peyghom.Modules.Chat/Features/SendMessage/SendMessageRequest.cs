@@ -6,7 +6,7 @@ namespace Peyghom.Modules.Chat.Features.SendMessage;
 public sealed record SendMessageRequest(
     string ChatId,
     string Content,
-    MessageType MessageType,
-    string ReplyToMessageId,
-    List<MessageAttachmentRequest>? Attachments);
+    MessageType MessageType = MessageType.Text,
+    string? ReplyToMessageId = null,
+    List<MessageAttachmentRequest>? Attachments = null);
 

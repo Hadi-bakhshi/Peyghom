@@ -1,115 +1,211 @@
-﻿using Microsoft.AspNetCore.SignalR;
-using MediatR;
+﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
+using Peyghom.Modules.Chat.Features.CreateGroupChat;
 using Peyghom.Modules.Chat.Features.SendMessage;
+using System.Security.Claims;
 
 namespace Peyghom.Modules.Chat.Hubs;
 
-public class ChatHub(ISender sender, ILogger<ChatHub> _logger) : Hub 
+[Authorize]
+public class ChatHub(ISender sender, ILogger<ChatHub> _logger) : Hub
 {
-    public async Task JoinChat(string chatId)
-    {
-        var userId = Context.UserIdentifier;
-        await Groups.AddToGroupAsync(Context.ConnectionId, $"chat_{chatId}");
+    private string UserId => Context.UserIdentifier
+    ?? Context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value
+    ?? throw new UnauthorizedAccessException("User not found");
 
-        //var command = new JoinChatCommand { ChatId = chatId, UserId = userId };
-        var command = new { ChatId = chatId, UserId = userId };
-        await sender.Send(command);
-
-        await Clients.Group($"chat_{chatId}").SendAsync("UserJoined", userId);
-        _logger.LogInformation("User {UserId} joined chat {ChatId}", userId, chatId);
-    }
-
-    public async Task LeaveChat(string chatId)
-    {
-        var userId = Context.UserIdentifier;
-        await Groups.RemoveFromGroupAsync(Context.ConnectionId, $"chat_{chatId}");
-
-        //var command = new LeaveChatCommand { ChatId = chatId, UserId = userId };
-        var command = new { ChatId = chatId, UserId = userId };
-        await sender.Send(command);
-
-        await Clients.Group($"chat_{chatId}").SendAsync("UserLeft", userId);
-        _logger.LogInformation("User {UserId} left chat {ChatId}", userId, chatId);
-    }
-
-    public async Task SendMessage(SendMessageRequest request)
-    {
-        var userId = Context.UserIdentifier;
-        var command = new SendMessageCommand(
-            request.ChatId,
-            userId,
-            request.Content,
-            request.MessageType,
-            request.ReplyToMessageId,
-            request.Attachments);
-      
-        var result = await sender.Send(command);
-
-        if (result.IsSuccess)
-        {
-            await Clients.Group($"chat_{request.ChatId}").SendAsync("MessageReceived", result.Value);
-
-            // Send delivery confirmations
-            //var deliveryCommand = new MarkMessageDeliveredCommand
-            var deliveryCommand = new
-            {
-                MessageId = result.Value.Id,
-                ChatId = request.ChatId
-            };
-            await sender.Send(deliveryCommand);
-        }
-    }
-
-    public async Task MarkMessageAsRead(string messageId, string chatId)
-    {
-        var userId = Context.UserIdentifier;
-        //var command = new MarkMessageAsReadCommand
-        var command = new
-        {
-            MessageId = messageId,
-            ChatId = chatId,
-            UserId = userId
-        };
-
-        await sender.Send(command);
-        await Clients.Group($"chat_{chatId}").SendAsync("MessageRead", messageId, userId);
-    }
-
-    public async Task StartTyping(string chatId)
-    {
-        var userId = Context.UserIdentifier;
-        //var command = new StartTypingCommand { ChatId = chatId, UserId = userId };
-        var command = new { ChatId = chatId, UserId = userId };
-        await sender.Send(command);
-
-        await Clients.GroupExcept($"chat_{chatId}", Context.ConnectionId)
-            .SendAsync("UserStartedTyping", userId);
-    }
-
-    public async Task StopTyping(string chatId)
-    {
-        var userId = Context.UserIdentifier;
-        //var command = new StopTypingCommand { ChatId = chatId, UserId = userId };
-        var command = new { ChatId = chatId, UserId = userId };
-        await sender.Send(command);
-
-        await Clients.GroupExcept($"chat_{chatId}", Context.ConnectionId)
-            .SendAsync("UserStoppedTyping", userId);
-    }
+    // ========================================
+    // CONNECTION LIFECYCLE
+    // ========================================
 
     public override async Task OnConnectedAsync()
     {
-        var userId = Context.UserIdentifier;
-        _logger.LogInformation("User {UserId} connected to chat hub", userId);
+
+        _logger.LogInformation("User {UserId} connected", UserId);
+
+        // Join user to their personal group
+        await Groups.AddToGroupAsync(Context.ConnectionId, $"user_{UserId}");
+
+        // Join user to their chats
+        var userChats = await sender.Send(new GetUserChatsQuery(UserId));
+        foreach (var chat in userChats)
+        {
+            await Groups.AddToGroupAsync(Context.ConnectionId, $"chat_{chat.Id}");
+        }
+
         await base.OnConnectedAsync();
+
     }
 
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
-        var userId = Context.UserIdentifier;
-        _logger.LogInformation("User {UserId} disconnected from chat hub", userId);
+        _logger.LogInformation("User {UserId} disconnected", UserId);
         await base.OnDisconnectedAsync(exception);
+    }
+
+    // ========================================
+    // MESSAGE OPERATIONS
+    // ========================================
+
+    public async Task SendMessage(SendMessageRequest request)
+    {
+        var command = new SendMessageCommand(
+                UserId,
+                request.ChatId,
+                request.Content,
+                request.MessageType,
+                request.ReplyToMessageId,
+                request.Attachments);
+
+        var result = await sender.Send(command);
+
+        await Clients.Group($"chat_{request.ChatId}")
+            .SendAsync("MessageReceived", result);
+    }
+
+    public async Task EditMessage(string messageId, string newContent)
+    {
+        var command = new EditMessageCommand(messageId, UserId, newContent);
+        var result = await sender.Send(command);
+
+        await Clients.Group($"chat_{result.ChatId}")
+            .SendAsync("MessageEdited", result);
+    }
+
+    public async Task DeleteMessage(string messageId)
+    {
+        var command = new DeleteMessageCommand(messageId, UserId);
+        var result = await sender.Send(command);
+
+        await Clients.Group($"chat_{result.ChatId}")
+            .SendAsync("MessageDeleted", new { MessageId = messageId, ChatId = result.ChatId });
+    }
+
+    public async Task MarkMessagesAsRead(string chatId, List<string> messageIds)
+    {
+        var command = new MarkMessagesAsReadCommand(chatId, UserId, messageIds);
+        await sender.Send(command);
+
+        await Clients.OthersInGroup($"chat_{chatId}")
+            .SendAsync("MessagesRead", new { ChatId = chatId, UserId, MessageIds = messageIds });
+
+    }
+
+    // ========================================
+    // REACTIONS
+    // ========================================
+
+    public async Task AddReaction(string messageId, string emoji)
+    {
+        var command = new AddReactionCommand(messageId, UserId, emoji);
+        var result = await sender.Send(command);
+
+        await Clients.Group($"chat_{result.ChatId}")
+            .SendAsync("ReactionAdded", result);
+    }
+
+    public async Task RemoveReaction(string messageId, string emoji)
+    {
+        var command = new RemoveReactionCommand(messageId, UserId, emoji);
+        var result = await sender.Send(command);
+
+        await Clients.Group($"chat_{result.ChatId}")
+            .SendAsync("ReactionRemoved", result);
+    }
+
+    // ========================================
+    // CHAT MANAGEMENT
+    // ========================================
+
+    public async Task CreateGroupChat(CreateGroupChatRequest request)
+    {
+        var command = new CreateGroupChatCommand(
+            UserId,
+            request.Name,
+            request.Description,
+            request.ParticipantIds);
+
+        var result = await sender.Send(command);
+
+        await Groups.AddToGroupAsync(Context.ConnectionId, $"chat_{result.Id}");
+
+        foreach (var participantId in request.ParticipantIds.Concat(new[] { UserId }))
+        {
+            await Clients.Group($"user_{participantId}")
+                .SendAsync("ChatCreated", result);
+        }
+    }
+
+    public async Task JoinChat(string chatId)
+    {
+        var isParticipant = await sender.Send(new IsUserParticipantQuery(chatId, UserId));
+        if (!isParticipant)
+        {
+            await Clients.Caller.SendAsync("Error", "Not authorized to join this chat");
+            return;
+        }
+
+        await Groups.AddToGroupAsync(Context.ConnectionId, $"chat_{chatId}");
+
+        await Clients.OthersInGroup($"chat_{chatId}")
+            .SendAsync("UserJoinedChat", new { ChatId = chatId, UserId });
+    }
+
+    public async Task LeaveChat(string chatId)
+    {
+        await Groups.RemoveFromGroupAsync(Context.ConnectionId, $"chat_{chatId}");
+
+        await Clients.OthersInGroup($"chat_{chatId}")
+            .SendAsync("UserLeftChat", new { ChatId = chatId, UserId });
+
+    }
+
+    public async Task AddParticipant(string chatId, string participantId)
+    {
+        var command = new AddParticipantCommand(chatId, participantId, UserId);
+        var result = await sender.Send(command);
+
+        await Clients.Group($"chat_{chatId}")
+            .SendAsync("ParticipantAdded", result);
+
+        await Clients.Group($"user_{participantId}")
+            .SendAsync("AddedToChat", result.Chat);
+    }
+
+    public async Task RemoveParticipant(string chatId, string participantId)
+    {
+        var command = new RemoveParticipantCommand(chatId, participantId, UserId);
+        await sender.Send(command);
+
+        await Clients.Group($"user_{participantId}")
+            .SendAsync("RemovedFromChat", new { ChatId = chatId });
+
+        await Clients.Group($"chat_{chatId}")
+            .SendAsync("ParticipantRemoved", new { ChatId = chatId, ParticipantId = participantId });
+    }
+
+    // ========================================
+    // TYPING INDICATORS
+    // ========================================
+
+    public async Task StartTyping(string chatId)
+    {
+        var isParticipant = await sender.Send(new IsUserParticipantQuery(chatId, UserId));
+        if (!isParticipant)
+        {
+            await Clients.Caller.SendAsync("Error", "Not authorized");
+            return;
+        }
+
+        await Clients.OthersInGroup($"chat_{chatId}")
+            .SendAsync("UserStartedTyping", new { ChatId = chatId, UserId });
+    }
+
+    public async Task StopTyping(string chatId)
+    {
+        await Clients.OthersInGroup($"chat_{chatId}")
+            .SendAsync("UserStoppedTyping", new { ChatId = chatId, UserId });
     }
 }
 
