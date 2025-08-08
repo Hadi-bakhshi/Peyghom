@@ -12,6 +12,18 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog((context, loggerConfiguration) =>
     loggerConfiguration.ReadFrom.Configuration(context.Configuration));
 
+builder.Services.AddCors(option =>
+{
+    option.AddPolicy("cors", policy =>
+    {
+        policy.WithOrigins("http://localhost:3000");
+        policy.AllowAnyHeader();
+        policy.AllowAnyMethod();
+        policy.AllowCredentials();
+        policy.SetIsOriginAllowed(host => true);
+    });
+});
+
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
 
@@ -55,6 +67,8 @@ app.UseExceptionHandler();
 app.UseSerilogRequestLogging();
 
 app.UseLogContextTraceLogging();
+
+app.UseCors("cors");
 
 app.UseAuthentication();
 
