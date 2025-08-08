@@ -3,7 +3,8 @@ using Peyghom.Modules.Chat.Features.AddReaction;
 
 namespace Peyghom.Modules.Chat.Features.SendMessage;
 
-public sealed record MessageResponse(string Id,
+public sealed record MessageResponse(
+    string Id,
     string ChatId,
     string SenderId,
     string Content,

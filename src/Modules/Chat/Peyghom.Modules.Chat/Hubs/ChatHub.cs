@@ -21,8 +21,8 @@ namespace Peyghom.Modules.Chat.Hubs;
 public class ChatHub(ISender sender, ILogger<ChatHub> _logger) : Hub
 {
     private string UserId => Context.UserIdentifier
-    ?? Context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value
-    ?? throw new UnauthorizedAccessException("User not found");
+                             ?? Context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                             ?? throw new UnauthorizedAccessException("User not found");
 
     // ========================================
     // CONNECTION LIFECYCLE
@@ -30,7 +30,6 @@ public class ChatHub(ISender sender, ILogger<ChatHub> _logger) : Hub
 
     public override async Task OnConnectedAsync()
     {
-
         _logger.LogInformation("User {UserId} connected", UserId);
 
         // Join user to their personal group
@@ -44,7 +43,6 @@ public class ChatHub(ISender sender, ILogger<ChatHub> _logger) : Hub
         }
 
         await base.OnConnectedAsync();
-
     }
 
     public override async Task OnDisconnectedAsync(Exception? exception)
@@ -60,12 +58,12 @@ public class ChatHub(ISender sender, ILogger<ChatHub> _logger) : Hub
     public async Task SendMessage(SendMessageRequest request)
     {
         var command = new SendMessageCommand(
-                UserId,
-                request.ChatId,
-                request.Content,
-                request.MessageType,
-                request.ReplyToMessageId,
-                request.Attachments);
+            UserId,
+            request.ChatId,
+            request.Content,
+            request.MessageType,
+            request.ReplyToMessageId,
+            request.Attachments);
 
         var result = await sender.Send(command);
 
@@ -98,7 +96,6 @@ public class ChatHub(ISender sender, ILogger<ChatHub> _logger) : Hub
 
         await Clients.OthersInGroup($"chat_{chatId}")
             .SendAsync("MessagesRead", new { ChatId = chatId, UserId, MessageIds = messageIds });
-
     }
 
     // ========================================
@@ -167,7 +164,6 @@ public class ChatHub(ISender sender, ILogger<ChatHub> _logger) : Hub
 
         await Clients.OthersInGroup($"chat_{chatId}")
             .SendAsync("UserLeftChat", new { ChatId = chatId, UserId });
-
     }
 
     public async Task AddParticipant(string chatId, string participantId)
@@ -217,6 +213,3 @@ public class ChatHub(ISender sender, ILogger<ChatHub> _logger) : Hub
             .SendAsync("UserStoppedTyping", new { ChatId = chatId, UserId });
     }
 }
-
-
-

@@ -3,7 +3,7 @@ using Peyghom.Modules.Chat.Domain;
 
 namespace Peyghom.Modules.Chat.Infrastructure.Repository.Chats;
 
-internal interface IChatRepository : IRepository<Domain.Chat>
+public interface IChatRepository : IRepository<Domain.Chat>
 {
     Task<List<Domain.Chat>> GetUserChatsAsync(string userId, CancellationToken cancellationToken = default);
     Task<Domain.Chat?> GetDirectMessageChatAsync(string userId1, string userId2, CancellationToken cancellationToken = default);

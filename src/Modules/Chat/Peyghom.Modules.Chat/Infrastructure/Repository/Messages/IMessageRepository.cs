@@ -3,7 +3,7 @@ using Peyghom.Modules.Chat.Domain;
 
 namespace Peyghom.Modules.Chat.Infrastructure.Repository.Messages;
 
-internal interface IMessageRepository : IRepository<Message>
+public interface IMessageRepository : IRepository<Message>
 {
     Task<List<Message>> GetChatMessagesAsync(string chatId, int page = 1, int pageSize = 50, CancellationToken cancellationToken = default);
     Task<List<Message>> GetChatMessagesBeforeAsync(string chatId, DateTime before, int limit = 50, CancellationToken cancellationToken = default);

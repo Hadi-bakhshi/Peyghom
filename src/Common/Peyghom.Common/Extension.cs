@@ -1,4 +1,7 @@
-﻿using FluentValidation;
+﻿using System.Reflection;
+using FluentValidation;
+using Mapster;
+using MapsterMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,6 +34,11 @@ public static class Extension
 
         services.AddValidatorsFromAssemblies(moduleAssemblies, includeInternalTypes: true);
 
+        var config = TypeAdapterConfig.GlobalSettings;
+        config.Scan(Assembly.GetExecutingAssembly());
+        services.AddSingleton(config);
+        services.AddScoped<IMapper, ServiceMapper>();
+        
         return services;
     }
 
