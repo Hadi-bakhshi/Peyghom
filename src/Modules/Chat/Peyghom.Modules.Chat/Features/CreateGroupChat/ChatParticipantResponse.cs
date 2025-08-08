@@ -1,6 +1,6 @@
 ﻿using Peyghom.Modules.Chat.Domain;
 
-namespace Peyghom.Modules.Chat.Contracts;
+namespace Peyghom.Modules.Chat.Features.CreateGroupChat;
 
 public sealed record ChatParticipantResponse(
     string UserId,

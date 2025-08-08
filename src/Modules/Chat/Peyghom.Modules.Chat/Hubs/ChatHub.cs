@@ -5,6 +5,15 @@ using Microsoft.Extensions.Logging;
 using Peyghom.Modules.Chat.Features.CreateGroupChat;
 using Peyghom.Modules.Chat.Features.SendMessage;
 using System.Security.Claims;
+using Peyghom.Modules.Chat.Features.AddParticipant;
+using Peyghom.Modules.Chat.Features.AddReaction;
+using Peyghom.Modules.Chat.Features.DeleteMessage;
+using Peyghom.Modules.Chat.Features.EditMessage;
+using Peyghom.Modules.Chat.Features.GetUserChats;
+using Peyghom.Modules.Chat.Features.IsUserParticipant;
+using Peyghom.Modules.Chat.Features.MarkMessagesAsRead;
+using Peyghom.Modules.Chat.Features.RemoveParticipant;
+using Peyghom.Modules.Chat.Features.RemoveReaction;
 
 namespace Peyghom.Modules.Chat.Hubs;
 
@@ -29,7 +38,7 @@ public class ChatHub(ISender sender, ILogger<ChatHub> _logger) : Hub
 
         // Join user to their chats
         var userChats = await sender.Send(new GetUserChatsQuery(UserId));
-        foreach (var chat in userChats)
+        foreach (var chat in userChats.Value)
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, $"chat_{chat.Id}");
         }
@@ -69,7 +78,7 @@ public class ChatHub(ISender sender, ILogger<ChatHub> _logger) : Hub
         var command = new EditMessageCommand(messageId, UserId, newContent);
         var result = await sender.Send(command);
 
-        await Clients.Group($"chat_{result.ChatId}")
+        await Clients.Group($"chat_{result.Value.ChatId}")
             .SendAsync("MessageEdited", result);
     }
 
@@ -78,8 +87,8 @@ public class ChatHub(ISender sender, ILogger<ChatHub> _logger) : Hub
         var command = new DeleteMessageCommand(messageId, UserId);
         var result = await sender.Send(command);
 
-        await Clients.Group($"chat_{result.ChatId}")
-            .SendAsync("MessageDeleted", new { MessageId = messageId, ChatId = result.ChatId });
+        await Clients.Group($"chat_{result.Value.ChatId}")
+            .SendAsync("MessageDeleted", new { MessageId = messageId, ChatId = result.Value.ChatId });
     }
 
     public async Task MarkMessagesAsRead(string chatId, List<string> messageIds)
@@ -101,7 +110,7 @@ public class ChatHub(ISender sender, ILogger<ChatHub> _logger) : Hub
         var command = new AddReactionCommand(messageId, UserId, emoji);
         var result = await sender.Send(command);
 
-        await Clients.Group($"chat_{result.ChatId}")
+        await Clients.Group($"chat_{result.Value.ChatId}")
             .SendAsync("ReactionAdded", result);
     }
 
@@ -110,7 +119,7 @@ public class ChatHub(ISender sender, ILogger<ChatHub> _logger) : Hub
         var command = new RemoveReactionCommand(messageId, UserId, emoji);
         var result = await sender.Send(command);
 
-        await Clients.Group($"chat_{result.ChatId}")
+        await Clients.Group($"chat_{result.Value.ChatId}")
             .SendAsync("ReactionRemoved", result);
     }
 
@@ -128,7 +137,7 @@ public class ChatHub(ISender sender, ILogger<ChatHub> _logger) : Hub
 
         var result = await sender.Send(command);
 
-        await Groups.AddToGroupAsync(Context.ConnectionId, $"chat_{result.Id}");
+        await Groups.AddToGroupAsync(Context.ConnectionId, $"chat_{result.Value.Id}");
 
         foreach (var participantId in request.ParticipantIds.Concat(new[] { UserId }))
         {
@@ -140,7 +149,7 @@ public class ChatHub(ISender sender, ILogger<ChatHub> _logger) : Hub
     public async Task JoinChat(string chatId)
     {
         var isParticipant = await sender.Send(new IsUserParticipantQuery(chatId, UserId));
-        if (!isParticipant)
+        if (!isParticipant.Value)
         {
             await Clients.Caller.SendAsync("Error", "Not authorized to join this chat");
             return;
@@ -170,7 +179,7 @@ public class ChatHub(ISender sender, ILogger<ChatHub> _logger) : Hub
             .SendAsync("ParticipantAdded", result);
 
         await Clients.Group($"user_{participantId}")
-            .SendAsync("AddedToChat", result.Chat);
+            .SendAsync("AddedToChat", result.Value.ChatResponse);
     }
 
     public async Task RemoveParticipant(string chatId, string participantId)
@@ -192,7 +201,7 @@ public class ChatHub(ISender sender, ILogger<ChatHub> _logger) : Hub
     public async Task StartTyping(string chatId)
     {
         var isParticipant = await sender.Send(new IsUserParticipantQuery(chatId, UserId));
-        if (!isParticipant)
+        if (!isParticipant.Value)
         {
             await Clients.Caller.SendAsync("Error", "Not authorized");
             return;
