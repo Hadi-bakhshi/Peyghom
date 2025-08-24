@@ -2,11 +2,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
-using Peyghom.Modules.Chat.Features.CreateGroupChat;
-using Peyghom.Modules.Chat.Features.SendMessage;
-using System.Security.Claims;
+using Peyghom.Modules.Chat.Domain;
 using Peyghom.Modules.Chat.Features.AddParticipant;
 using Peyghom.Modules.Chat.Features.AddReaction;
+using Peyghom.Modules.Chat.Features.CreateGroupChat;
 using Peyghom.Modules.Chat.Features.DeleteMessage;
 using Peyghom.Modules.Chat.Features.EditMessage;
 using Peyghom.Modules.Chat.Features.GetUserChats;
@@ -14,6 +13,9 @@ using Peyghom.Modules.Chat.Features.IsUserParticipant;
 using Peyghom.Modules.Chat.Features.MarkMessagesAsRead;
 using Peyghom.Modules.Chat.Features.RemoveParticipant;
 using Peyghom.Modules.Chat.Features.RemoveReaction;
+using Peyghom.Modules.Chat.Features.SendMessage;
+using System;
+using System.Security.Claims;
 
 namespace Peyghom.Modules.Chat.Hubs;
 
@@ -36,11 +38,12 @@ public class ChatHub(ISender sender, ILogger<ChatHub> _logger) : Hub
         await Groups.AddToGroupAsync(Context.ConnectionId, $"user_{UserId}");
 
         // Join user to their chats
-        var userChats = await sender.Send(new GetUserChatsQuery(UserId));
-        foreach (var chat in userChats.Value)
-        {
-            await Groups.AddToGroupAsync(Context.ConnectionId, $"chat_{chat.Id}");
-        }
+        //var userChats = await sender.Send(new GetUserChatsQuery(UserId));
+        //foreach (var chat in userChats.Value)
+        //{
+        //    await Groups.AddToGroupAsync(Context.ConnectionId, $"chat_{chat.Id}");
+        //}
+        await Groups.AddToGroupAsync(Context.ConnectionId, $"chat_507f1f77bcf86cd799439030");
 
         await base.OnConnectedAsync();
     }
@@ -58,7 +61,7 @@ public class ChatHub(ISender sender, ILogger<ChatHub> _logger) : Hub
     public async Task SendMessage(SendMessageRequest request)
     {
         var command = new SendMessageCommand(
-            UserId,
+            "507f1f77bcf86cd799439012",
             request.ChatId,
             request.Content,
             request.MessageType,
@@ -68,7 +71,7 @@ public class ChatHub(ISender sender, ILogger<ChatHub> _logger) : Hub
         var result = await sender.Send(command);
 
         await Clients.Group($"chat_{request.ChatId}")
-            .SendAsync("MessageReceived", result);
+            .SendAsync("MessageReceived", result.Value);
     }
 
     public async Task EditMessage(string messageId, string newContent)

@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Peyghom.Common.Infrastructure.Authentication;
 
@@ -6,9 +7,14 @@ internal static class AuthenticationExtensions
 {
     internal static IServiceCollection AddAuthenticationInternal(this IServiceCollection services)
     {
-        services.AddAuthorization();
+        services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+        }).AddJwtBearer();
 
-        services.AddAuthentication().AddJwtBearer();
+        services.AddAuthorization();
 
         services.AddHttpContextAccessor();
 

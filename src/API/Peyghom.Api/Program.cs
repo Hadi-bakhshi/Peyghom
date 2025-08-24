@@ -30,7 +30,7 @@ builder.Services.AddProblemDetails();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApi();
 
-builder.Services.AddApplication([Peyghom.Modules.Users.AssemblyReference.Assembly]);
+builder.Services.AddApplication([Peyghom.Modules.Users.AssemblyReference.Assembly, Peyghom.Modules.Chat.AssemblyReference.Assembly]);
 
 string databaseConnectionString = builder.Configuration.GetConnectionString("Database")!;
 string redisConnectionString = builder.Configuration.GetConnectionString("Cache")!;

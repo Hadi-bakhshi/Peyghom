@@ -34,6 +34,7 @@ public static class Extension
 
         services.AddValidatorsFromAssemblies(moduleAssemblies, includeInternalTypes: true);
 
+
         var config = TypeAdapterConfig.GlobalSettings;
         config.Scan(Assembly.GetExecutingAssembly());
         services.AddSingleton(config);
