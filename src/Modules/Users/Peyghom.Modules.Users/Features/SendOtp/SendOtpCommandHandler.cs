@@ -27,7 +27,7 @@ internal sealed class SendOtpCommandHandler(
 
         await cacheService.SetAsync(request.Target, code, TimeSpan.FromMinutes(2), cancellationToken);
 
-        var accessToken = jwtProvider.GenerateVerificationToken(request.Target);
+        var accessToken = jwtProvider.GenerateVerificationToken(request.Target, request.Type);
 
         return Result.Success(new SendOtpResponse(accessToken));
     }

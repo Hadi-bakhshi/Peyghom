@@ -21,7 +21,7 @@ internal sealed class JwtProvider : IJwtProvider
         throw new NotImplementedException();
     }
 
-    public string GenerateVerificationToken(string identifier)
+    public string GenerateVerificationToken(string identifier, string identifierType)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = Encoding.UTF8.GetBytes(_jwtSettings.SecretKey);
@@ -37,6 +37,7 @@ internal sealed class JwtProvider : IJwtProvider
             new (CustomClaims.Permission, Permissions.VerifyUserOtp),
             new(ClaimTypes.NameIdentifier, identifier),
             new(ClaimTypes.Role, Role.Ghost.Name),
+            new(CustomClaims.IdentifierType, identifierType)
         };
 
         var tokenDescriptor = new SecurityTokenDescriptor

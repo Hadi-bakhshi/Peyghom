@@ -19,6 +19,12 @@ public static class ClaimsPrincipalExtensions
                throw new PeyghomException("User identity is unavailable");
     }
 
+    public static string GetIdentifierType(this ClaimsPrincipal? principal)
+    {
+        return principal?.FindFirst(CustomClaims.IdentifierType)?.Value
+        ?? throw new PeyghomException("Identifier type is unavailable");
+    }
+
     public static string GetRoleName(this ClaimsPrincipal? principal)
     {
         return principal?.FindFirst(ClaimTypes.Role)?.Value
