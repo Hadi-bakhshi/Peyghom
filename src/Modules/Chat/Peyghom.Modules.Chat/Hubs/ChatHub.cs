@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
-using Peyghom.Modules.Chat.Domain;
 using Peyghom.Modules.Chat.Features.AddParticipant;
 using Peyghom.Modules.Chat.Features.AddReaction;
 using Peyghom.Modules.Chat.Features.CreateGroupChat;
@@ -14,7 +13,6 @@ using Peyghom.Modules.Chat.Features.MarkMessagesAsRead;
 using Peyghom.Modules.Chat.Features.RemoveParticipant;
 using Peyghom.Modules.Chat.Features.RemoveReaction;
 using Peyghom.Modules.Chat.Features.SendMessage;
-using System;
 using System.Security.Claims;
 
 namespace Peyghom.Modules.Chat.Hubs;
@@ -35,15 +33,15 @@ public class ChatHub(ISender sender, ILogger<ChatHub> _logger) : Hub
         _logger.LogInformation("User {UserId} connected", UserId);
 
         // Join user to their personal group
-        await Groups.AddToGroupAsync(Context.ConnectionId, $"user_{UserId}");
+        await Groups.AddToGroupAsync(Context.ConnectionId, $"user_507f1f77bcf86cd799439012");
 
         // Join user to their chats
-        //var userChats = await sender.Send(new GetUserChatsQuery(UserId));
-        //foreach (var chat in userChats.Value)
-        //{
-        //    await Groups.AddToGroupAsync(Context.ConnectionId, $"chat_{chat.Id}");
-        //}
-        await Groups.AddToGroupAsync(Context.ConnectionId, $"chat_507f1f77bcf86cd799439030");
+        var userChats = await sender.Send(new GetUserChatsQuery("507f1f77bcf86cd799439012"));
+        foreach (var chat in userChats.Value)
+        {
+            await Groups.AddToGroupAsync(Context.ConnectionId, $"chat_{chat.Id}");
+        }
+        //await Groups.AddToGroupAsync(Context.ConnectionId, $"chat_507f1f77bcf86cd799439030");
 
         await base.OnConnectedAsync();
     }
